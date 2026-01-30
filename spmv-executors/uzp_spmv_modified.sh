@@ -5,6 +5,9 @@ if [ "$#" -lt 4 ]; then
     exit 1
 fi
 
+# get UZP_PROJECT_ROOT from environment variable if set
+UZP_PROJECT_ROOT=${UZP_PROJECT_ROOT:-"/uzp-artifact"}
+
 MATRIX_NAME=$1
 FLOAT_DATA_TYPE=$2
 CACHE_MODE=$3
@@ -43,10 +46,11 @@ else
 fi
 
 TEMP_DIRECTORY="/tmp"
+MATRIX_FILE="${TEMP_DIRECTORY}/${MATRIX_NAME}.tar.gz"
 
 # Run the pldi25-singularity/scripts/z_polyhedrator_manager.py
 if [ ! -f "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.1d.uzp" ]; then
-    python3 /uzp-artifact/lib/scripts/z_polyhedrator_manager.py "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.mtx" "$TEMP_DIRECTORY/${MATRIX_NAME}";
+    python3 ../lib/scripts/z_polyhedrator_manager.py "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.mtx" "$TEMP_DIRECTORY/${MATRIX_NAME}";
 fi
 
 # Tune the UZP file
@@ -54,10 +58,10 @@ if [ -f "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.1d.uzp" ]; then
     if [ ! -f "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.tuned.uzp" ]; then
             # Build if necessary
             echo -e "${SCRIPT_TAG} Building spf_aggregator..."
-	    make -C /uzp-artifact/uzp-tuners spf_aggregator
+	    make -C ../uzp-tuners spf_aggregator
 
             echo -e "${SCRIPT_TAG} Running spf_aggregator..."
-            /uzp-artifact/uzp-tuners/spf_aggregator "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.1d.uzp" "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.tuned.uzp"
+            $PROJECT_ROOT/uzp-tuners/spf_aggregator "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.1d.uzp" "$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.tuned.uzp"
     fi
 else
     echo -e "${ERROR_TAG} File \"$TEMP_DIRECTORY/${MATRIX_NAME}/${MATRIX_NAME}.1d.uzp\" not found."

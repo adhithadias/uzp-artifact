@@ -46,8 +46,8 @@ if __name__ == "__main__":
         print("Usage: python z_polyhedrator_manager.py <input_matrix_file> <output_directory>")
         sys.exit(1)
         
-    # get PROJECT_ROOT from environment variable if set
-    project_root = os.getenv("PROJECT_ROOT", "/uzp-artifact")
+    # get UZP_PROJECT_ROOT from environment variable if set
+    project_root = os.getenv("UZP_PROJECT_ROOT", "/uzp-artifact")
 
     # Pass parameters dynamically
     repo_directory = os.path.join(project_root, "z_polyhedrator")
